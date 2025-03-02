@@ -237,6 +237,9 @@ static bool IsCursorThreshold(double deadzone = 0, bool isBelowThreshold = false
 
 static void SetDPadAnalogDirectionX(PPCRegister& pPadState, PPCRegister& x, bool invert, float max = 1.0f)
 {
+    if (!Config::DPadAsAnalogInput)
+        return;
+
     auto pGuestPadState = (SWA::SPadState*)g_memory.Translate(pPadState.u32);
 
     if (pGuestPadState->IsDown(SWA::eKeyState_DpadLeft))
@@ -248,6 +251,9 @@ static void SetDPadAnalogDirectionX(PPCRegister& pPadState, PPCRegister& x, bool
 
 static void SetDPadAnalogDirectionY(PPCRegister& pPadState, PPCRegister& y, bool invert, float max = 1.0f)
 {
+    if (!Config::DPadAsAnalogInput)
+        return;
+
     auto pGuestPadState = (SWA::SPadState*)g_memory.Translate(pPadState.u32);
 
     if (pGuestPadState->IsDown(SWA::eKeyState_DpadUp))
@@ -403,16 +409,16 @@ PPC_FUNC(sub_8256C938)
         pWorldMapCursor->m_LeftStickVertical = rPadState.LeftStickVertical;
         pWorldMapCursor->m_LeftStickHorizontal = rPadState.LeftStickHorizontal;
 
-        if (rPadState.IsDown(SWA::eKeyState_DpadUp))
+        if (rPadState.IsDown(SWA::eKeyState_DpadUp) && Config::DPadAsAnalogInput)
             pWorldMapCursor->m_LeftStickVertical = 1.0f;
 
-        if (rPadState.IsDown(SWA::eKeyState_DpadDown))
+        if (rPadState.IsDown(SWA::eKeyState_DpadDown) && Config::DPadAsAnalogInput)
             pWorldMapCursor->m_LeftStickVertical = -1.0f;
 
-        if (rPadState.IsDown(SWA::eKeyState_DpadLeft))
+        if (rPadState.IsDown(SWA::eKeyState_DpadLeft) && Config::DPadAsAnalogInput)
             pWorldMapCursor->m_LeftStickHorizontal = -1.0f;
 
-        if (rPadState.IsDown(SWA::eKeyState_DpadRight))
+        if (rPadState.IsDown(SWA::eKeyState_DpadRight) && Config::DPadAsAnalogInput)
             pWorldMapCursor->m_LeftStickHorizontal = 1.0f;
 
         if (sqrtl((pWorldMapCursor->m_LeftStickHorizontal * pWorldMapCursor->m_LeftStickHorizontal) +
